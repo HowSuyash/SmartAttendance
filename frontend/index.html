@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Attendance - Facial Expression Recognition</title>
+    <meta name="description" content="AI-powered classroom engagement analysis using facial expression recognition">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo">
+                    <span class="logo-icon">🎓</span>
+                    Smart Attendance
+                </h1>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link active">Upload</a>
+                    <a href="dashboard.html" class="nav-link">Dashboard</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="hero">
+                <h2 class="hero-title">Analyze Classroom Engagement</h2>
+                <p class="hero-subtitle">Upload a classroom photo to detect student engagement using AI-powered facial expression recognition</p>
+            </section>
+
+            <!-- Upload Section -->
+            <section class="upload-section">
+                <div class="upload-card glass-card">
+                    <!-- Drop Zone -->
+                    <div class="drop-zone" id="dropZone">
+                        <div class="drop-zone-content">
+                            <div class="upload-icon">📸</div>
+                            <h3 class="drop-zone-title">Drag & Drop Your Image</h3>
+                            <p class="drop-zone-subtitle">or click to browse</p>
+                            <input type="file" id="fileInput" accept="image/png,image/jpeg,image/jpg" hidden>
+                            <button class="btn btn-primary" id="browseBtn">Select Image</button>
+                        </div>
+                    </div>
+
+                    <!-- Class Name Input -->
+                    <div class="input-group">
+                        <label for="className" class="input-label">Class Name (Optional)</label>
+                        <input type="text" id="className" class="input-field" placeholder="e.g., Computer Science 101">
+                    </div>
+
+                    <!-- Analyze Button -->
+                    <button class="btn btn-analyze" id="analyzeBtn" disabled>
+                        <span class="btn-text">Analyze Engagement</span>
+                        <span class="btn-loader" id="loader"></span>
+                    </button>
+                </div>
+
+                <!-- Preview Section -->
+                <div class="preview-section" id="previewSection" style="display: none;">
+                    <div class="preview-card glass-card">
+                        <h3 class="preview-title">Image Preview</h3>
+                        <img id="imagePreview" class="image-preview" alt="Preview">
+                        <button class="btn btn-secondary btn-small" id="removeImageBtn">Remove Image</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <h2 class="section-title">Analysis Results</h2>
+                
+                <!-- Statistics Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card glass-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-content">
+                            <h3 class="stat-value" id="totalFaces">0</h3>
+                            <p class="stat-label">Total Students</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card glass-card engaged">
+                        <div class="stat-icon">😊</div>
+                        <div class="stat-content">
+                            <h3 class="stat-value" id="engagedCount">0</h3>
+                            <p class="stat-label">Engaged</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card glass-card disengaged">
+                        <div class="stat-icon">😐</div>
+                        <div class="stat-content">
+                            <h3 class="stat-value" id="disengagedCount">0</h3>
+                            <p class="stat-label">Disengaged</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card glass-card percentage">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-content">
+                            <h3 class="stat-value" id="engagementPercent">0%</h3>
+                            <p class="stat-label">Engagement Rate</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Annotated Image -->
+                <div class="annotated-image-section">
+                    <h3 class="subsection-title">Detected Faces</h3>
+                    <div class="annotated-image-card glass-card">
+                        <img id="annotatedImage" class="annotated-image" alt="Annotated Image">
+                    </div>
+                </div>
+
+                <!-- Individual Faces -->
+                <div class="faces-section">
+                    <h3 class="subsection-title">Individual Analysis</h3>
+                    <div class="faces-grid" id="facesGrid"></div>
+                </div>
+
+                <!-- Emotion Distribution Chart -->
+                <div class="chart-section">
+                    <h3 class="subsection-title">Emotion Distribution</h3>
+                    <div class="chart-card glass-card">
+                        <canvas id="emotionChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-text">Smart Attendance FER System &copy; 2026 | Powered by AI</p>
+        </div>
+    </footer>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

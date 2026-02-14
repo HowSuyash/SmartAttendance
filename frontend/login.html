@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Smart Attendance</title>
+    <link rel="stylesheet" href="light-theme.css">
+    <style>
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, hsl(210, 95%, 95%) 0%, hsl(155, 70%, 95%) 100%);
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 420px;
+            margin: var(--space-lg);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: var(--space-2xl);
+        }
+
+        .logo-icon {
+            font-size: 3rem;
+            margin-bottom: var(--space-md);
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-xl);
+            border-bottom: 2px solid var(--border);
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: var(--space-md);
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all var(--transition-fast);
+            margin-bottom: -2px;
+        }
+
+        .auth-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .btn-full {
+            width: 100%;
+            padding: 14px;
+            font-size: 1.05rem;
+        }
+
+        .divider {
+            text-align: center;
+            margin: var(--space-xl) 0;
+            color: var(--text-muted);
+            position: relative;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .divider::before {
+            left: 0;
+        }
+
+        .divider::after {
+            right: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="auth-container">
+        <div class="auth-card card">
+            <div class="logo">
+                <div class="logo-icon">📊</div>
+                <div class="logo-text">Smart Attendance</div>
+                <p class="text-muted" style="margin-top: var(--space-sm);">Face Emotion Recognition System</p>
+            </div>
+
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="showTab('login')">Login</button>
+                <button class="auth-tab" onclick="showTab('signup')">Sign Up</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form active">
+                <div id="loginAlert"></div>
+
+                <div class="form-group">
+                    <label class="form-label" for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" class="input-field" placeholder="institution@example.com"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" class="input-field" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                    Login
+                </button>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signupForm" class="auth-form">
+                <div id="signupAlert"></div>
+
+                <div class="form-group">
+                    <label class="form-label" for="signupInstitution">Institution Name</label>
+                    <input type="text" id="signupInstitution" class="input-field" placeholder="ABC School" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" class="input-field" placeholder="institution@example.com"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" class="input-field" placeholder="••••••••" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="signupConfirm">Confirm Password</label>
+                    <input type="password" id="signupConfirm" class="input-field" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                    Create Account
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000';
+
+        function showTab(tab) {
+            // Update tabs
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update forms
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            document.getElementById(tab + 'Form').classList.add('active');
+
+            // Clear alerts
+            document.getElementById('loginAlert').innerHTML = '';
+            document.getElementById('signupAlert').innerHTML = '';
+        }
+
+        function showAlert(elementId, message, type) {
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
+            document.getElementById(elementId).innerHTML = `
+                <div class="alert ${alertClass}">${message}</div>
+            `;
+        }
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Store token and user data
+                    localStorage.setItem('token', data.user.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+
+                    showAlert('loginAlert', 'Login successful! Redirecting...', 'success');
+
+                    // Redirect based on role
+                    setTimeout(() => {
+                        if (data.user.role === 'institution') {
+                            window.location.href = 'institution_dashboard.html';
+                        } else {
+                            window.location.href = 'student_dashboard.html';
+                        }
+                    }, 1000);
+                } else {
+                    showAlert('loginAlert', data.error || 'Login failed', 'error');
+                }
+            } catch (error) {
+                showAlert('loginAlert', 'Connection error. Is the backend running?', 'error');
+            }
+        });
+
+        // Signup form handler
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const institution_name = document.getElementById('signupInstitution').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirm = document.getElementById('signupConfirm').value;
+
+            if (password !== confirm) {
+                showAlert('signupAlert', 'Passwords do not match', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/auth/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, institution_name })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Store token and user data
+                    localStorage.setItem('token', data.user.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+
+                    showAlert('signupAlert', 'Account created! Redirecting...', 'success');
+
+                    // Redirect to dashboard
+                    setTimeout(() => {
+                        window.location.href = 'institution_dashboard.html';
+                    }, 1000);
+                } else {
+                    showAlert('signupAlert', data.error || 'Signup failed', 'error');
+                }
+            } catch (error) {
+                showAlert('signupAlert', 'Connection error. Is the backend running?', 'error');
+            }
+        });
+
+        // Check if already logged in
+        window.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('user');
+
+            if (token && user) {
+                const userData = JSON.parse(user);
+                if (userData.role === 'institution') {
+                    window.location.href = 'institution_dashboard.html';
+                } else {
+                    window.location.href = 'student_dashboard.html';
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

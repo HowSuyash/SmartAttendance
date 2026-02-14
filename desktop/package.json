@@ -1,0 +1,30 @@
+{
+    "name": "smart-attendance-fer",
+    "version": "1.0.0",
+    "description": "Smart Attendance System using Facial Expression Recognition",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "build": "electron-builder"
+    },
+    "author": "Smart Attendance Team",
+    "license": "MIT",
+    "devDependencies": {
+        "electron": "^28.0.0",
+        "electron-builder": "^24.9.1"
+    },
+    "build": {
+        "appId": "com.smartattendance.fer",
+        "productName": "Smart Attendance",
+        "win": {
+            "target": "nsis",
+            "icon": "icon.ico"
+        },
+        "files": [
+            "main.js",
+            "preload.js",
+            "../frontend/**/*",
+            "../backend/**/*"
+        ]
+    }
+}

@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Institution Dashboard - Smart Attendance</title>
+    <link rel="stylesheet" href="light-theme.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background: var(--bg-light);
+        }
+
+        .header {
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-2xl);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .btn-logout {
+            padding: 8px 16px;
+            background: var(--bg-hover);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-2xl);
+        }
+
+        .stat-card {
+            background: white;
+            padding: var(--space-xl);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: var(--space-md) 0;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .sessions-section {
+            background: var(--bg-white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: var(--space-xl);
+            color: var(--text-primary);
+        }
+
+        .session-card {
+            background: var(--primary-light);
+            padding: var(--space-lg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+            border: 1px solid var(--primary-medium);
+        }
+
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+        }
+
+        .session-class {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .session-date {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .session-stats {
+            display: flex;
+            gap: var(--space-xl);
+        }
+
+        .session-stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .session-stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .session-stat-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .engaged {
+            color: var(--success);
+        }
+
+        .disengaged {
+            color: var(--danger);
+        }
+
+        .chart-container {
+            margin-top: var(--space-2xl);
+            background: var(--bg-white);
+            padding: var(--space-xl);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .loading {
+            text-align: center;
+            padding: var(--space-2xl);
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo-text">📊 Smart Attendance</div>
+            <div class="user-info">
+                <span id="institutionName">Loading...</span>
+                <button class="btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1 style="margin-bottom: var(--space-2xl); color: var(--text-primary);">Institution Dashboard</h1>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Sessions</div>
+                <div class="stat-value" id="totalSessions">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Students Tracked</div>
+                <div class="stat-value" id="totalStudents">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Average Engagement</div>
+                <div class="stat-value" id="avgEngagement">0%</div>
+            </div>
+        </div>
+
+        <!-- Upload New Image Section -->
+        <div class="upload-section" style="margin-bottom: var(--space-2xl);">
+            <div class="sessions-section">
+                <h2 class="section-title">📸 Analyze New Classroom Image</h2>
+
+                <!-- Drop Zone -->
+                <div id="dropZone"
+                    style="border: 2px dashed var(--primary); border-radius: var(--radius-lg); padding: var(--space-2xl); text-align: center; cursor: pointer; transition: all 0.3s; background: var(--primary-light);">
+                    <div class="drop-zone-content">
+                        <div style="font-size: 3rem; margin-bottom: var(--space-md);">📸</div>
+                        <h3 style="margin-bottom: var(--space-sm);">Drag & Drop Your Image</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: var(--space-lg);">or click to browse</p>
+                        <input type="file" id="fileInput" accept="image/png,image/jpeg,image/jpg" hidden>
+                        <button class="btn btn-primary" id="browseBtn"
+                            style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: var(--radius-md); cursor: pointer; font-weight: 600;">Select
+                            Image</button>
+                    </div>
+                </div>
+
+                <!-- Class Name Input -->
+                <div style="margin-top: var(--space-lg);">
+                    <label for="className"
+                        style="display: block; margin-bottom: var(--space-sm); font-weight: 500;">Class Name
+                        (Optional)</label>
+                    <input type="text" id="className" placeholder="e.g., Computer Science 101"
+                        style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 1rem;">
+                </div>
+
+                <!-- Preview Section -->
+                <div id="previewSection" style="display: none; margin-top: var(--space-lg);">
+                    <h3 style="margin-bottom: var(--space-md);">Image Preview</h3>
+                    <img id="imagePreview"
+                        style="max-width: 100%; border-radius: var(--radius-md); margin-bottom: var(--space-md);"
+                        alt="Preview">
+                    <button id="removeImageBtn" class="btn btn-secondary"
+                        style="background: var(--bg-hover); border: 1px solid var(--border); padding: 8px 16px; border-radius: var(--radius-md); cursor: pointer;">Remove
+                        Image</button>
+                </div>
+
+                <!-- Analyze Button -->
+                <button id="analyzeBtn" disabled
+                    style="width: 100%; margin-top: var(--space-lg); padding: 14px; background: var(--primary); color: white; border: none; border-radius: var(--radius-md); font-size: 1.05rem; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+                    <span class="btn-text">Analyze Engagement</span>
+                </button>
+
+                <!-- Results Section -->
+                <div id="resultsSection" style="display: none; margin-top: var(--space-2xl);">
+                    <h3 class="section-title">Analysis Results</h3>
+
+                    <!-- Statistics Cards -->
+                    <div
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-md); margin-bottom: var(--space-xl);">
+                        <div
+                            style="background: var(--primary-light); padding: var(--space-lg); border-radius: var(--radius-md); text-align: center;">
+                            <div style="font-size: 2rem; margin-bottom: var(--space-sm);">👥</div>
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--primary);" id="totalFaces">0
+                            </div>
+                            <div style="color: var(--text-secondary); font-size: 0.9rem;">Total Students</div>
+                        </div>
+                        <div
+                            style="background: hsla(155, 70%, 95%, 1); padding: var(--space-lg); border-radius: var(--radius-md); text-align: center;">
+                            <div style="font-size: 2rem; margin-bottom: var(--space-sm);">😊</div>
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--success);" id="engagedCount">0
+                            </div>
+                            <div style="color: var(--text-secondary); font-size: 0.9rem;">Engaged</div>
+                        </div>
+                        <div
+                            style="background: hsla(350, 85%, 95%, 1); padding: var(--space-lg); border-radius: var(--radius-md); text-align: center;">
+                            <div style="font-size: 2rem; margin-bottom: var(--space-sm);">😐</div>
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--danger);" id="disengagedCount">0
+                            </div>
+                            <div style="color: var(--text-secondary); font-size: 0.9rem;">Disengaged</div>
+                        </div>
+                        <div
+                            style="background: var(--primary-light); padding: var(--space-lg); border-radius: var(--radius-md); text-align: center;">
+                            <div style="font-size: 2rem; margin-bottom: var(--space-sm);">📊</div>
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--primary);"
+                                id="engagementPercent">0%</div>
+                            <div style="color: var(--text-secondary); font-size: 0.9rem;">Engagement Rate</div>
+                        </div>
+                    </div>
+
+                    <!-- Annotated Image -->
+                    <div style="margin-bottom: var(--space-xl);">
+                        <h4 style="margin-bottom: var(--space-md);">Detected Faces</h4>
+                        <img id="annotatedImage" style="max-width: 100%; border-radius: var(--radius-md);"
+                            alt="Annotated Image">
+                    </div>
+
+                    <!-- Individual Faces -->
+                    <div style="margin-bottom: var(--space-xl);">
+                        <h4 style="margin-bottom: var(--space-md);">Individual Analysis</h4>
+                        <div id="facesGrid"
+                            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-md);">
+                        </div>
+                    </div>
+
+                    <!-- Emotion Distribution -->
+                    <div>
+                        <h4 style="margin-bottom: var(--space-md);">Emotion Distribution</h4>
+                        <div
+                            style="background: white; padding: var(--space-xl); border-radius: var(--radius-lg); max-width: 500px; margin: 0 auto;">
+                            <canvas id="emotionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sessions History -->
+        <div class="sessions-section">
+            <h2 class="section-title">All Class Sessions</h2>
+            <div id="sessionsList">
+                <div class="loading">Loading sessions...</div>
+            </div>
+        </div>
+
+        <!-- Engagement Trends Chart -->
+        <div class="chart-container">
+            <h2 class="section-title">Engagement Trends</h2>
+            <canvas id="engagementChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000';
+        let chart = null;
+
+        // Check authentication
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('user');
+
+            if (!token || !user) {
+                window.location.href = 'login.html';
+                return null;
+            }
+
+            return { token, user: JSON.parse(user) };
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+
+        // Load dashboard data
+        async function loadDashboard() {
+            const auth = checkAuth();
+            if (!auth) return;
+
+            // Display institution name
+            document.getElementById('institutionName').textContent = auth.user.institution_name || 'Institution';
+
+            try {
+                // Fetch dashboard stats (use existing endpoint for now)
+                const response = await fetch(`${API_URL}/dashboard/stats?days=30`, {
+                    headers: {
+                        'Authorization': `Bearer ${auth.token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        logout();
+                        return;
+                    }
+                    throw new Error('Failed to load dashboard data');
+                }
+
+                const data = await response.json();
+
+                // Update stats
+                document.getElementById('totalSessions').textContent = data.total_sessions || 0;
+                document.getElementById('totalStudents').textContent = data.total_students || 0;
+                document.getElementById('avgEngagement').textContent =
+                    (data.engagement_percentage || 0).toFixed(1) + '%';
+
+                // Display sessions
+                displaySessions(data.recent_sessions || []);
+
+                // Render chart
+                if (data.trends && data.trends.length > 0) {
+                    renderChart(data.trends);
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                document.getElementById('sessionsList').innerHTML = `
+                    <div class="alert alert-error">Failed to load dashboard data. Please make sure the backend is running.</div>
+                `;
+            }
+        }
+
+        // Display sessions
+        function displaySessions(sessions) {
+            const container = document.getElementById('sessionsList');
+
+            if (sessions.length === 0) {
+                container.innerHTML = `
+                    <div class="alert alert-info">
+                        No sessions yet. Start by uploading a classroom image!
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = sessions.map(session => {
+                const stats = session.statistics || {};
+                const timestamp = parseTimestamp(session.timestamp);
+                const engagementPct = stats.total_faces > 0
+                    ? (stats.engaged_count / stats.total_faces * 100).toFixed(1)
+                    : 0;
+
+                return `
+                    <div class="session-card">
+                        <div class="session header">
+                            <div class="session-class">${session.class_name || 'Unknown Class'}</div>
+                            <div class="session-date">${timestamp}</div>
+                        </div>
+                        <div class="session-stats">
+                            <div class="session-stat">
+                                <span class="session-stat-label">Total Students</span>
+                                <span class="session-stat-value">${stats.total_faces || 0}</span>
+                            </div>
+                            <div class="session-stat">
+                                <span class="session-stat-label">Engaged</span>
+                                <span class="session-stat-value engaged">${stats.engaged_count || 0}</span>
+                            </div>
+                            <div class="session-stat">
+                                <span class="session-stat-label">Disengaged</span>
+                                <span class="session-stat-value disengaged">${stats.disengaged_count || 0}</span>
+                            </div>
+                            <div class="session-stat">
+                                <span class="session-stat-label">Engagement</span>
+                                <span class="session-stat-value" style="color: var(--primary)">${engagementPct}%</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Parse timestamp
+        function parseTimestamp(timestamp) {
+            try {
+                let date;
+                if (timestamp._seconds) {
+                    date = new Date(timestamp._seconds * 1000);
+                } else if (timestamp.seconds) {
+                    date = new Date(timestamp.seconds * 1000);
+                } else if (typeof timestamp === 'string') {
+                    date = new Date(timestamp);
+                } else {
+                    return 'Unknown date';
+                }
+                return date.toLocaleString();
+            } catch (e) {
+                return 'Unknown date';
+            }
+        }
+
+        // Render engagement chart
+        function renderChart(trends) {
+            const ctx = document.getElementById('engagementChart').getContext('2d');
+
+            const labels = trends.map(t => {
+                const date = new Date(t.date._seconds ? t.date._seconds * 1000 : t.date);
+                return date.toLocaleDateString();
+            });
+
+            const totalData = trends.map(t => t.total);
+            const engagedData = trends.map(t => t.engaged);
+            const disengagedData = trends.map(t => t.disengaged);
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Total Students',
+                            data: totalData,
+                            borderColor: 'hsl(210, 85%, 45%)',
+                            backgroundColor: 'hsla(210, 85%, 45%, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Engaged',
+                            data: engagedData,
+                            borderColor: 'hsl(155, 70%, 50%)',
+                            backgroundColor: 'hsla(155, 70%, 50%, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Disengaged',
+                            data: disengagedData,
+                            borderColor: 'hsl(350, 85%, 55%)',
+                            backgroundColor: 'hsla(350, 85%, 55%, 0.1)',
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // ===== Image Upload Functionality =====
+        let selectedFile = null;
+        let emotionChartInstance = null;
+
+        // Get upload elements
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const browseBtn = document.getElementById('browseBtn');
+        const className = document.getElementById('className');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const previewSection = document.getElementById('previewSection');
+        const imagePreview = document.getElementById('imagePreview');
+        const removeImageBtn = document.getElementById('removeImageBtn');
+        const resultsSection = document.getElementById('resultsSection');
+
+        // Browse button click
+        browseBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // Drop zone click
+        dropZone.addEventListener('click', (e) => {
+            if (e.target === dropZone || e.target.closest('.drop-zone-content')) {
+                fileInput.click();
+            }
+        });
+
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleFileSelect(file);
+            }
+        });
+
+        // Drag and drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--primary)';
+            dropZone.style.background = 'var(--primary-medium)';
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.borderColor = '';
+            dropZone.style.background = 'var(--primary-light)';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '';
+            dropZone.style.background = 'var(--primary-light)';
+
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                handleFileSelect(file);
+            } else {
+                alert('Please drop a valid image file (PNG, JPG, JPEG)');
+            }
+        });
+
+        // Remove image button
+        removeImageBtn.addEventListener('click', () => {
+            resetUpload();
+        });
+
+        // Analyze button
+        analyzeBtn.addEventListener('click', () => {
+            if (selectedFile) {
+                analyzeImage();
+            }
+        });
+
+        // Handle file selection
+        function handleFileSelect(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Please select a valid image file');
+                return;
+            }
+
+            if (file.size > 16 * 1024 * 1024) {
+                alert('File size must be less than 16MB');
+                return;
+            }
+
+            selectedFile = file;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imagePreview.src = e.target.result;
+                previewSection.style.display = 'block';
+                analyzeBtn.disabled = false;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Reset upload
+        function resetUpload() {
+            selectedFile = null;
+            fileInput.value = '';
+            previewSection.style.display = 'none';
+            analyzeBtn.disabled = true;
+            resultsSection.style.display = 'none';
+        }
+
+        // Analyze image
+        async function analyzeImage() {
+            if (!selectedFile) return;
+
+            analyzeBtn.style.opacity = '0.7';
+            analyzeBtn.disabled = true;
+            analyzeBtn.innerHTML = '<span>Analyzing...</span>';
+
+            resultsSection.style.display = 'none';
+
+            try {
+                const formData = new FormData();
+                formData.append('image', selectedFile);
+                formData.append('class_name', className.value || 'Unknown Class');
+
+                const response = await fetch(`${API_URL}/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Analysis failed');
+                }
+
+                const data = await response.json();
+                displayAnalysisResults(data);
+
+                // Reload dashboard to show new session
+                setTimeout(() => loadDashboard(), 2000);
+
+            } catch (error) {
+                console.error('Analysis error:', error);
+                alert(`Analysis failed: ${error.message}`);
+            } finally {
+                analyzeBtn.style.opacity = '1';
+                analyzeBtn.disabled = false;
+                analyzeBtn.innerHTML = '<span class="btn-text">Analyze Engagement</span>';
+            }
+        }
+
+        // Display analysis results
+        function displayAnalysisResults(data) {
+            const { faces, statistics, annotated_image } = data;
+
+            document.getElementById('totalFaces').textContent = statistics.total_faces;
+            document.getElementById('engagedCount').textContent = statistics.engaged_count;
+            document.getElementById('disengagedCount').textContent = statistics.disengaged_count;
+            document.getElementById('engagementPercent').textContent =
+                statistics.engagement_percentage.toFixed(1) + '%';
+
+            if (annotated_image) {
+                document.getElementById('annotatedImage').src = `${API_URL}/image/${annotated_image}`;
+            }
+
+            displayFaces(faces);
+            displayEmotionChart(statistics.emotion_distribution);
+
+            resultsSection.style.display = 'block';
+            setTimeout(() => {
+                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+        }
+
+        // Display individual faces
+        function displayFaces(faces) {
+            const facesGrid = document.getElementById('facesGrid');
+            facesGrid.innerHTML = '';
+
+            if (faces.length === 0) {
+                facesGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-secondary);">No faces detected</p>';
+                return;
+            }
+
+            faces.forEach((face, index) => {
+                const faceCard = document.createElement('div');
+                faceCard.style.cssText = 'background: var(--primary-light); padding: var(--space-lg); border-radius: var(--radius-md); text-align: center; border: 1px solid var(--primary-medium);';
+
+                const emotionEmoji = {
+                    'happy': '😊', 'sad': '😢', 'angry': '😠', 'surprise': '😲',
+                    'fear': '😨', 'disgust': '🤢', 'neutral': '😐'
+                }[face.emotion] || '😐';
+
+                const engagementColor = face.engagement_level === 'engaged' ? 'var(--success)' : 'var(--danger)';
+
+                faceCard.innerHTML = `
+                    <div style="font-size: 0.9rem; font-weight: 600; color: var(--primary); margin-bottom: 0.5rem;">
+                        Student ${index + 1}
+                    </div>
+                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">${emotionEmoji}</div>
+                    <div style="font-weight: 600; color: var(--text-primary); text-transform: capitalize; margin-bottom: 0.5rem;">${face.emotion}</div>
+                    <div style="display: inline-block; padding: 4px 12px; background: ${engagementColor}; color: white; border-radius: 12px; font-size: 0.85rem; text-transform: capitalize;">
+                        ${face.engagement_level}
+                    </div>
+                `;
+
+                facesGrid.appendChild(faceCard);
+            });
+        }
+
+        // Display emotion chart
+        function displayEmotionChart(emotionDistribution) {
+            const ctx = document.getElementById('emotionChart').getContext('2d');
+
+            if (emotionChartInstance) {
+                emotionChartInstance.destroy();
+            }
+
+            const labels = Object.keys(emotionDistribution);
+            const data = Object.values(emotionDistribution);
+
+            const backgroundColors = [
+                'hsla(210, 85%, 45%, 0.8)', 'hsla(190, 85%, 55%, 0.8)', 'hsla(155, 70%, 50%, 0.8)',
+                'hsla(165, 75%, 55%, 0.8)', 'hsla(200, 80%, 50%, 0.8)', 'hsla(180, 70%, 45%, 0.8)',
+                'hsla(220, 80%, 55%, 0.8)'
+            ];
+
+            emotionChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels.map(e => e.charAt(0).toUpperCase() + e.slice(1)),
+                    datasets: [{
+                        data: data,
+                        backgroundColor: backgroundColors,
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: { size: 12 }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load dashboard on page load
+        window.addEventListener('DOMContentLoaded', loadDashboard);
+    </script>
+</body>
+
+</html>
