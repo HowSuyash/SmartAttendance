@@ -3,7 +3,7 @@
  * Handles image upload, API communication, and results display
  */
 
-const API_URL = 'http://localhost:8000';
+const API_URL = 'https://smartattendance-tnmh.onrender.com';
 
 // DOM Elements
 const dropZone = document.getElementById('dropZone');

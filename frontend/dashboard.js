@@ -3,7 +3,7 @@
  * Displays historical data and engagement trends
  */
 
-const API_URL = 'http://localhost:8000';
+const API_URL = 'https://smartattendance-tnmh.onrender.com';
 
 // State
 let trendsChartInstance = null;
