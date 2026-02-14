@@ -24,10 +24,18 @@ app = Flask(__name__,
 app.config['MAX_CONTENT_LENGTH'] = Config.MAX_CONTENT_LENGTH
 app.config['UPLOAD_FOLDER'] = Config.UPLOAD_FOLDER
 
-# Enable CORS
+# Enable CORS - Allow Netlify frontend and localhost
+allowed_origins = [
+    "https://jade-swan-f35334.netlify.app",
+    "http://localhost:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:8000"
+]
+
 CORS(app, resources={
     r"/*": {
-        "origins": "*",
+        "origins": allowed_origins,
         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         "allow_headers": ["Content-Type", "Authorization"],
         "supports_credentials": False
