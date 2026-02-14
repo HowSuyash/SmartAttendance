@@ -103,7 +103,7 @@
 
 **Live Demo Link:** [Coming Soon - Deploy on Vercel]
 
-**GitHub Repository:** [Your GitHub Repository URL]
+**GitHub Repository:** https://github.com/HowSuyash/SmartAttendance
 
 **Video Demo:** [Optional - YouTube/Drive Link]
 
@@ -353,7 +353,7 @@ MIT License - Free for educational and commercial use
 
 ## 🤝 TEAM CONTRIBUTIONS
 
-[Add your team member names and roles here]
+[Add your team member names and r
 
 - **[Name]:** Backend development, Firebase integration
 - **[Name]:** Frontend UI/UX, Chart.js dashboards
