@@ -353,12 +353,12 @@ MIT License - Free for educational and commercial use
 
 ## 🤝 TEAM CONTRIBUTIONS
 
-[Add your team member names and r
+**Team Members:**
 
-- **[Name]:** Backend development, Firebase integration
-- **[Name]:** Frontend UI/UX, Chart.js dashboards
-- **[Name]:** AI model integration, face detection
-- **[Name]:** Authentication, testing, deployment
+- **Suyash Shukla:** Backend development, Firebase integration, cloud architecture, AI model setup
+- **Rashmi Bhagat:** Frontend UI/UX design, glassmorphism implementation, Chart.js visualizations
+- **Vansh Bathla:** MediaPipe face detection integration, emotion recognition optimization, testing
+- **Vaishnavi Tripathi:** Authentication system, desktop app development, documentation, deployment
 
 ---
 
