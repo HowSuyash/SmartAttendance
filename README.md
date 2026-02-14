@@ -101,7 +101,10 @@
 
 ## 🔗 SECTION 4: IMPORTANT LINKS
 
-**Live Demo Link:** [Coming Soon - Deploy on Vercel]
+**Live Demo Link:** https://jade-swan-f35334.netlify.app/login.html
+
+> [!NOTE]
+> The live demo shows the **frontend UI only**. Full functionality requires backend deployment. For local testing with full features, see Installation section below.
 
 **GitHub Repository:** https://github.com/HowSuyash/SmartAttendance
 
