@@ -27,6 +27,7 @@ app.config['UPLOAD_FOLDER'] = Config.UPLOAD_FOLDER
 # Enable CORS - Allow Netlify frontend and localhost
 allowed_origins = [
     "https://jade-swan-f35334.netlify.app",
+    "https://dashing-concha-5401f5.netlify.app",
     "http://localhost:3000",
     "http://localhost:8000",
     "http://127.0.0.1:3000",
