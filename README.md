@@ -101,10 +101,12 @@
 
 ## 🔗 SECTION 4: IMPORTANT LINKS
 
-**Live Demo Link:** https://jade-swan-f35334.netlify.app/login.html
+**Backend API (Live):** https://smartattendance-tnmh.onrender.com/health
 
-> [!NOTE]
-> The live demo shows the **frontend UI only**. Full functionality requires backend deployment. For local testing with full features, see Installation section below.
+**Frontend Demo:** https://auraattendance.netlify.app
+
+> [!IMPORTANT]
+> **For Full Functionality:** The backend is deployed and live on Render (free tier). For the best experience with all features working, please run the application locally following the Installation instructions below. The deployed frontend may have caching issues - local setup ensures all features work perfectly.
 
 **GitHub Repository:** https://github.com/HowSuyash/SmartAttendance
 
