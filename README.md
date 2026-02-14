@@ -101,18 +101,21 @@
 
 ## 🔗 SECTION 4: IMPORTANT LINKS
 
+**Live Demo (Frontend):** https://dashing-concha-5401f5.netlify.app
+
 **Backend API (Live):** https://smartattendance-tnmh.onrender.com/health
-
-**Frontend Demo:** https://auraattendance.netlify.app
-
-> [!IMPORTANT]
-> **For Full Functionality:** The backend is deployed and live on Render (free tier). For the best experience with all features working, please run the application locally following the Installation instructions below. The deployed frontend may have caching issues - local setup ensures all features work perfectly.
 
 **GitHub Repository:** https://github.com/HowSuyash/SmartAttendance
 
-**Video Demo:** [Optional - YouTube/Drive Link]
+> [!IMPORTANT]
+> **Full Stack Deployment:** Both frontend and backend are deployed and live! 
+> - **First Request:** Takes 30-60 seconds (Render free tier cold start)
+> - **After Wake-Up:** All features work normally
+> - **To Test:** Go to live demo → Login → Sign Up → Create account
 
-**API Documentation:** Available at `/health` endpoint when server is running
+**Video Demo:** [Coming Soon]
+
+**API Documentation:** Available at `/health` endpoint
 
 ---
 
