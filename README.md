@@ -48,7 +48,7 @@
 
 ### AI Models
 - **Face Detection:** MediaPipe Face Detection (runs locally, zero cost)
-- **Emotion Recognition:** Vision Transformer (`trpakov/vit-face-expression`) via Hugging Face Inference API (free tier)
+- **Emotion Recognition:** Vision Transformer (`mo-thecreator/vit-Facial-Expression-Recognition`) via Hugging Face Inference API (free tier)
 
 ---
 
@@ -113,7 +113,7 @@
 > - **After Wake-Up:** All features work normally
 > - **To Test:** Go to live demo → Login → Sign Up → Create account
 
-**Video Demo:** [Coming Soon]
+**Video Demo:** [Watch on Google Drive](https://drive.google.com/drive/folders/1Hmk0T0Vz8zul2IswyqhaBjfhzvZXw6Yv?usp=drive_link)
 
 **API Documentation:** Available at `/health` endpoint
 
@@ -173,7 +173,7 @@ Create `.env` file in root:
 ```env
 # Hugging Face (Get free token at huggingface.co/settings/tokens)
 HUGGINGFACE_API_TOKEN=your_hf_token_here
-HUGGINGFACE_MODEL_URL=https://api-inference.huggingface.co/models/trpakov/vit-face-expression
+HUGGINGFACE_MODEL_URL=https://api-inference.huggingface.co/models/mo-thecreator/vit-Facial-Expression-Recognition
 
 # Firebase (Download credentials from Firebase Console)
 FIREBASE_CREDENTIALS_PATH=firebase-credentials.json
