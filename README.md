@@ -101,7 +101,7 @@
 
 ## 🔗 SECTION 4: IMPORTANT LINKS
 
-**Live Demo (Frontend):** https://dashing-concha-5401f5.netlify.app
+**Live Demo (Frontend):** https://dashing-concha-5401f5.netlify.app/login.html
 
 **Backend API (Live):** https://smartattendance-tnmh.onrender.com/health
 
